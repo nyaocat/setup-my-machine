@@ -1,0 +1,87 @@
+---
+- name: set up my machine
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: update homebrew
+      community.general.homebrew:
+        update_homebrew: true
+
+    - name: install packages
+      community.general.homebrew:
+        name:
+          - ansible
+          - awscli
+          - bash
+          - duckdb
+          - eza
+          - gnu-tar
+          - jq
+          - moreutils
+          - mise
+          - peco
+          - postgresql@15
+          - tmux
+          - tig
+          - zsh-autosuggestions
+          - zsh-completions
+          - zsh-syntax-highlighting
+          - homebrew/cask/dbeaver-community
+
+    - name: check pg_bigm.so
+      stat:
+        path: /opt/homebrew/opt/postgresql@15/lib/postgresql/pg_bigm.so
+      register: rc_pg_bigm
+
+    - name: install pg_bigm
+      when: not rc_pg_bigm.stat.exists
+      block:
+        - name: prepare temporary directory for pg_bigm build
+          ansible.builtin.tempfile:
+            state: directory
+          register: rc_tempdir
+
+        - name: unarchive pg_bigm
+          ansible.builtin.unarchive:
+            src: "https://github.com/pgbigm/pg_bigm/archive/refs/tags/v1.2-20240606.tar.gz"
+            dest: "{{ rc_tempdir.path }}"
+            remote_src: yes
+
+        - name: build pg_bigm
+          ansible.builtin.command:
+            cmd: "make USE_PGXS=1 PG_CONFIG=/opt/homebrew/opt/postgresql@15/bin/pg_config"
+            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20240606"
+
+        - name: install pg_bigm
+          ansible.builtin.command:
+            cmd: "make USE_PGXS=1 PG_CONFIG=/opt/homebrew/opt/postgresql@15/bin/pg_config install"
+            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20240606"
+
+        - name: clean up tmeporary directory
+          ansible.builtin.file:
+            path: "{{ rc_tempdir.path }}"
+            state: absent
+
+    - name: start postgresql
+      community.general.homebrew_services:
+        name: postgresql@15
+        state: "{{ 'present' if rc_pg_bigm.stat.exists else 'restarted' }}"
+
+    - name: prepare ~/.config/git
+      ansible.builtin.file:
+        path: ~/.config/git
+        state: directory
+
+    - name: copy files
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - src: assets/zshrc
+          dest: ~/.zshrc
+        - src: assets/zprofile
+          dest: ~/.zprofile
+        - src: assets/tmux.conf
+          dest: ~/.tmux.conf
+        - src: assets/gitignore
+          dest: ~/.config/git/ignore
