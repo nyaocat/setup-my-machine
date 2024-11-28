@@ -7,6 +7,10 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+if type mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 PROMPT="
 %n@%m:%d
 %# "
