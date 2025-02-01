@@ -3,12 +3,10 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: update homebrew
-      community.general.homebrew:
-        update_homebrew: true
-
     - name: install packages
       community.general.homebrew:
+        update_homebrew: true
+        upgrade_all: true
         name:
           - ansible
           - awscli
@@ -16,6 +14,7 @@
           - duckdb
           - eza
           - gnu-tar
+          - gh
           - jq
           - moreutils
           - mise
@@ -26,7 +25,6 @@
           - zsh-autosuggestions
           - zsh-completions
           - zsh-syntax-highlighting
-          - homebrew/cask/dbeaver-community
 
     - name: check pg_bigm.so
       stat:
