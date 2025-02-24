@@ -1,0 +1,93 @@
+---
+- name: set up my machine
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: setup packages
+      become: yes
+      block:
+        - name: remove unneccesary packages
+          ansible.builtin.apt:
+            state: absent
+            purge: yes
+            name:
+              - nano
+              - vim-tiny
+              - snapd
+        
+        - name: install packages for gpg
+          ansible.builtin.apt:
+            state: present
+            name:
+              - apt-transport-https
+              - ca-certificates
+              - curl
+              - software-properties-common
+              - wget
+              - gpg
+              - sudo
+        
+        - name: add mise repository gpg key
+          ansible.builtin.apt_key:
+            url: https://mise.jdx.dev/gpg-key.pub
+            state: present
+    
+        - name: add mise repository
+          ansible.builtin.apt_repository:
+            repo: deb [arch=amd64] https://mise.jdx.dev/deb stable main
+            state: present
+    
+        - name: install packages
+          ansible.builtin.apt:
+            autoremove: yes
+            update_cache: yes
+            state: latest
+            name:
+              - ansible
+              - aria2
+              - autoconf
+              - bison
+              - build-essential
+              - eza
+              - ffmpeg
+              - git
+              - git-lfs
+              - jq
+              - make
+              - mise
+              - openjdk-21-jdk-headless
+              - patch
+              - peco
+              - pv
+              - sqlite3
+              - tar
+              - tig
+              - tmux
+              - vim
+              - zsh
+          
+        - name: set user shell to zsh
+          ansible.builtin.user:
+            name: "{{ ansible_user | default(ansible_env.USER) }}"
+            shell: /usr/bin/zsh
+    
+    - name: prepare ~/.config/git
+      ansible.builtin.file:
+        path: ~/.config/git
+        state: directory
+
+    - name: copy files
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - src: assets/ubuntu/zshrc
+          dest: ~/.zshrc
+        - src: assets/ubuntu/zprofile
+          dest: ~/.zprofile
+        - src: assets/tmux.conf
+          dest: ~/.tmux.conf
+        - src: assets/gitignore
+          dest: ~/.config/git/ignore
+
+

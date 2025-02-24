@@ -75,9 +75,9 @@
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
       loop:
-        - src: assets/zshrc
+        - src: assets/mac/zshrc
           dest: ~/.zshrc
-        - src: assets/zprofile
+        - src: assets/mac/zprofile
           dest: ~/.zprofile
         - src: assets/tmux.conf
           dest: ~/.tmux.conf
