@@ -25,6 +25,7 @@
           - zsh-autosuggestions
           - zsh-completions
           - zsh-syntax-highlighting
+          - vlc
 
     - name: check pg_bigm.so
       stat:
