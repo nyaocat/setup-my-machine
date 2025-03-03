@@ -66,10 +66,13 @@
         name: postgresql@15
         state: "{{ 'present' if rc_pg_bigm.stat.exists else 'restarted' }}"
 
-    - name: prepare ~/.config/git
+    - name: prepare git and mise config directory
       ansible.builtin.file:
-        path: ~/.config/git
+        path: "{{ item }}"
         state: directory
+      loop:
+        - ~/.config/mise
+        - ~/.config/git
 
     - name: copy files
       ansible.builtin.copy:
@@ -84,3 +87,14 @@
           dest: ~/.tmux.conf
         - src: assets/gitignore
           dest: ~/.config/git/ignore
+
+    - name: copy mise config file
+      ansible.builtin.copy:
+        src: assets/mise.config.toml
+        dest: ~/.config/mise/config.toml
+      register: rc_copy_mise_config
+
+    - name: install mise
+      ansible.builtin.command:
+        cmd: mise install
+      when: rc_copy_mise_config.changed
