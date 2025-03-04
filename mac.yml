@@ -13,6 +13,7 @@
           - bash
           - duckdb
           - eza
+          - genact
           - gnu-tar
           - gh
           - jq
