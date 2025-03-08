@@ -27,6 +27,8 @@
           - zsh-completions
           - zsh-syntax-highlighting
           - vlc
+          - logseq
+          - superwhisper
 
     - name: check pg_bigm.so
       stat:
