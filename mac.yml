@@ -29,6 +29,7 @@
           - vlc
           - logseq
           - superwhisper
+          - ffmpeg
 
     - name: check pg_bigm.so
       stat:
@@ -101,3 +102,6 @@
       ansible.builtin.command:
         cmd: mise install
       when: rc_copy_mise_config.changed
+
+    - name: Clean up downloads directory
+      ansible.builtin.shell: 'rm -rf ~/Downloads/*'
