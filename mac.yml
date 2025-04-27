@@ -19,6 +19,7 @@
           - jq
           - moreutils
           - mise
+          - maccy
           - peco
           - postgresql@16
           - tmux
