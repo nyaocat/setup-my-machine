@@ -11,15 +11,18 @@
           - ansible
           - awscli
           - bash
+          - cmake
           - duckdb
           - eza
           - genact
           - gnu-tar
+          - grep
           - gh
           - jq
           - moreutils
           - mise
           - maccy
+          - ngrok
           - peco
           - postgresql@16
           - tmux
@@ -31,6 +34,8 @@
           - logseq
           - superwhisper
           - ffmpeg
+          - pkgconf
+          - visual-studio-code
 
     - name: check pg_bigm.so
       stat:

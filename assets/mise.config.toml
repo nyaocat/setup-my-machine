@@ -1,6 +1,12 @@
 [tools]
 github-cli = "2.57.0"
+node = "latest"
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@google/gemini-cli" = "latest"
 uv = "0.6.3"
 
 [settings]
 idiomatic_version_file_enable_tools = []
+
+[env]
+GOOGLE_CLOUD_PROJECT = "gen-lang-client-0536883645"

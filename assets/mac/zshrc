@@ -16,6 +16,7 @@ PROMPT="
 %# "
 
 alias l='eza --git --group-directories-first -l --time-style long-iso'
+alias code='open -a "Visual Studio Code"'
 
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=100000
