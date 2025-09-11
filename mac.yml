@@ -16,12 +16,12 @@
           - eza
           - genact
           - gnu-tar
+          - gnu-sed
           - grep
           - gh
           - jq
           - moreutils
           - mise
-          - maccy
           - ngrok
           - peco
           - postgresql@16
@@ -30,9 +30,10 @@
           - zsh-autosuggestions
           - zsh-completions
           - zsh-syntax-highlighting
+          - gemini-cli
+          - claude-code
           - vlc
           - logseq
-          - superwhisper
           - ffmpeg
           - pkgconf
           - visual-studio-code
