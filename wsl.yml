@@ -2,6 +2,10 @@
 - name: set up my machine
   hosts: localhost
   connection: local
+  vars:
+    docker_cli_plugins_dir: "{{ ansible_env.HOME }}/.docker/cli-plugins"
+    docker_pussh_path: "{{ docker_cli_plugins_dir }}/docker-pussh"
+    docker_pussh_url: "https://raw.githubusercontent.com/psviderski/unregistry/v0.3.0/docker-pussh"
   tasks:
     - name: setup packages
       become: yes
@@ -36,6 +40,18 @@
           ansible.builtin.apt_repository:
             repo: deb [arch=amd64] https://mise.jdx.dev/deb stable main
             state: present
+
+        - name: Ensure Docker CLI plugins directory exists
+          file:
+            path: "{{ docker_cli_plugins_dir }}"
+            state: directory
+            mode: '0755'
+
+        - name: Download docker-pussh plugin
+          get_url:
+            url: "{{ docker_pussh_url }}"
+            dest: "{{ docker_pussh_path }}"
+            mode: '0755'
     
         - name: install packages
           ansible.builtin.apt:
