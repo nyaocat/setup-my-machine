@@ -18,6 +18,7 @@
               - nano
               - vim-tiny
               - snapd
+              - mise
         
         - name: install packages for gpg
           ansible.builtin.apt:
@@ -31,16 +32,6 @@
               - gpg
               - sudo
         
-        - name: add mise repository gpg key
-          ansible.builtin.apt_key:
-            url: https://mise.jdx.dev/gpg-key.pub
-            state: present
-    
-        - name: add mise repository
-          ansible.builtin.apt_repository:
-            repo: deb [arch=amd64] https://mise.jdx.dev/deb stable main
-            state: present
-
         - name: Ensure Docker CLI plugins directory exists
           file:
             path: "{{ docker_cli_plugins_dir }}"
@@ -64,13 +55,13 @@
               - autoconf
               - bison
               - build-essential
+              - curl
               - eza
               - ffmpeg
               - git
               - git-lfs
               - jq
               - make
-              - mise
               - openjdk-21-jdk-headless
               - patch
               - peco
@@ -86,7 +77,28 @@
           ansible.builtin.user:
             name: "{{ ansible_user | default(ansible_env.USER) }}"
             shell: /usr/bin/zsh
+
+    - name: check brew existence
+      stat:
+        path: /home/linuxbrew/.linuxbrew/bin/brew
+      register: rc_brew
     
+    - name: install linuxbrew
+      when: not rc_brew.stat.exists
+      block:
+        - name: prepare hombrew directory
+          become: yes
+          ansible.builtin.file:
+            path: /home/linuxbrew/.linuxbrew
+            state: directory
+            owner: "{{ ansible_user | default(ansible_env.USER) }}"
+            group: "{{ ansible_user | default(ansible_env.USER) }}"
+            mode: '0755'
+
+        - name: install linuxbrew
+          ansible.builtin.shell: |
+            curl -fsSL https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C /home/linuxbrew/.linuxbrew
+
     - name: prepare ~/.config/git
       ansible.builtin.file:
         path: ~/.config/git
