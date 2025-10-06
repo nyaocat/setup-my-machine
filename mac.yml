@@ -12,6 +12,7 @@
           - awscli
           - bash
           - cmake
+          - codex
           - duckdb
           - eza
           - genact
