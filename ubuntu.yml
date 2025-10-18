@@ -99,6 +99,14 @@
           ansible.builtin.shell: |
             curl -fsSL https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C /home/linuxbrew/.linuxbrew
 
+    - name: install homebrew packages
+      community.general.homebrew:
+        update_homebrew: true
+        upgrade_all: true
+        name:
+          - gcc
+          - mise
+
     - name: prepare ~/.config/git
       ansible.builtin.file:
         path: ~/.config/git

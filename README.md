@@ -7,8 +7,8 @@
 3. `ansible-galaxy install -r requirements.yml`
 4. `ansible-playbook mac.yml`
 
-## wsl
-1. setup wsl by ubuntu
+## ubuntu
+1. Enables sudo commands to be executed without entering a password
 2. `sudo apt install ansible`
 3. `ansible-galaxy install -r requirements.yml`
-4. `ansible-playbook wsl.yml --ask-become-pass`
+4. `ansible-playbook ubuntu.yml --ask-become-pass`
