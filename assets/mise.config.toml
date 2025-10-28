@@ -1,7 +1,4 @@
 [tools]
-github-cli = "2.57.0"
-node = "latest"
-uv = "0.6.3"
 
 [settings]
 idiomatic_version_file_enable_tools = []

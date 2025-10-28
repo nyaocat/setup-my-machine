@@ -11,37 +11,38 @@
           - ansible
           - awscli
           - bash
+          - claude-code
           - cmake
           - codex
           - duckdb
           - eza
+          - ffmpeg
+          - gemini-cli
           - genact
-          - gnu-tar
-          - gnu-sed
-          - grep
           - gh
+          - gnu-sed
+          - gnu-tar
+          - grep
           - jq
-          - moreutils
+          - logseq
           - mise
+          - moreutils
           - ngrok
           - peco
+          - pkgconf
           - postgresql@16
-          - tmux
           - tig
+          - tmux
+          - visual-studio-code
+          - vlc
+          - zoxide
           - zsh-autosuggestions
           - zsh-completions
           - zsh-syntax-highlighting
-          - gemini-cli
-          - claude-code
-          - vlc
-          - logseq
-          - ffmpeg
-          - pkgconf
-          - visual-studio-code
 
     - name: check pg_bigm.so
       stat:
-        path: /opt/homebrew/opt/postgresql@16/lib/postgresql/pg_bigm.so
+        path: /opt/homebrew/opt/postgresql@16/lib/postgresql/pg_bigm.dylib
       register: rc_pg_bigm
 
     - name: install pg_bigm
@@ -54,19 +55,19 @@
 
         - name: unarchive pg_bigm
           ansible.builtin.unarchive:
-            src: "https://github.com/pgbigm/pg_bigm/archive/refs/tags/v1.2-20240606.tar.gz"
+            src: "https://github.com/pgbigm/pg_bigm/archive/refs/tags/v1.2-20250903.tar.gz"
             dest: "{{ rc_tempdir.path }}"
             remote_src: yes
 
         - name: build pg_bigm
           ansible.builtin.command:
             cmd: "make USE_PGXS=1 PG_CONFIG=/opt/homebrew/opt/postgresql@16/bin/pg_config"
-            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20240606"
+            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20250903"
 
         - name: install pg_bigm
           ansible.builtin.command:
             cmd: "make USE_PGXS=1 PG_CONFIG=/opt/homebrew/opt/postgresql@16/bin/pg_config install"
-            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20240606"
+            chdir: "{{ rc_tempdir.path }}/pg_bigm-1.2-20250903"
 
         - name: clean up tmeporary directory
           ansible.builtin.file:
