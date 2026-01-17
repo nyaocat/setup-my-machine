@@ -1,3 +1,4 @@
 .DS_store
 *.swp
-mise.toml
+mise.local.toml
+.claude/settings.local.json

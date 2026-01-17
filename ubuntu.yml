@@ -104,8 +104,17 @@
         update_homebrew: true
         upgrade_all: true
         name:
+          - claude-code
+          - cmake
+          - eza
+          - ffmpeg
           - gcc
           - mise
+          - moreutils
+          - tig
+          - zsh-autosuggestions
+          - zsh-completions
+          - zsh-syntax-highlighting
 
     - name: prepare ~/.config/git
       ansible.builtin.file:
