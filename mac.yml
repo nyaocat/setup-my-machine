@@ -20,21 +20,27 @@
           - gemini-cli
           - genact
           - gh
+          - glow
           - gnu-sed
           - gnu-tar
+          - google-japanese-ime
           - grep
           - jq
           - logseq
           - mise
           - moreutils
           - ngrok
+          - notion
           - peco
           - pkgconf
           - postgresql@16
+          - slack
           - tig
           - tmux
+          - vips
           - visual-studio-code
           - vlc
+          - webp
           - zoxide
           - zsh-autosuggestions
           - zsh-completions
