@@ -26,14 +26,14 @@
           - google-japanese-ime
           - grep
           - jq
-          - logseq
           - mise
           - moreutils
           - ngrok
-          - notion
+          - obsidian
           - peco
           - pkgconf
           - postgresql@16
+          - restic
           - slack
           - tig
           - tmux
@@ -98,6 +98,8 @@
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
       loop:
+        - src: assets/mac/bash_profile
+          dest: ~/.bash_profile
         - src: assets/mac/zshrc
           dest: ~/.zshrc
         - src: assets/mac/zprofile
