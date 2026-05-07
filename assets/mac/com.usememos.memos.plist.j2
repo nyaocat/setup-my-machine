@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.usememos.memos</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{ ansible_env.HOME }}/.local/bin/memos</string>
+        <string>--port</string>
+        <string>5230</string>
+        <string>--data</string>
+        <string>{{ ansible_env.HOME }}/Documents/memos</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>WorkingDirectory</key>
+    <string>{{ ansible_env.HOME }}/Documents/memos</string>
+    <key>StandardOutPath</key>
+    <string>{{ ansible_env.HOME }}/Documents/memos/memos.log</string>
+    <key>StandardErrorPath</key>
+    <string>{{ ansible_env.HOME }}/Documents/memos/memos.error.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>
