@@ -1,0 +1,29 @@
+[user]
+	name = Masaya Kusuda
+	email = m_kusuda@ga-tech.co.jp
+
+[core]
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	line-numbers = true
+
+[diff]
+	colorMoved = default
+
+[merge]
+	conflictstyle = zdiff3
+
+# 構文木ベースの差分を見たいときだけ明示的に: git dft
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
+
+[difftool]
+	prompt = false
+
+[alias]
+	dft = difftool -t difftastic

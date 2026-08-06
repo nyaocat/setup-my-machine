@@ -30,7 +30,6 @@
           - moreutils
           - ngrok
           - obsidian
-          - peco
           - pkgconf
           - postgresql@16
           - restic
@@ -53,6 +52,54 @@
           - yq
           - rancher
           - linear
+          - ripgrep
+          - bat
+          - fzf
+          - git-delta
+          - gron
+          - tealdeer
+          - hyperfine
+          - dust
+          - duf
+          - procs
+          - bottom
+          - choose-rust
+          - miller
+          - qsv
+          - ripgrep-all
+          - just
+          - watchexec
+          - atuin
+          - xh
+
+    - name: remove packages
+      community.general.homebrew:
+        name:
+          - peco
+        state: absent
+
+    # tealdeer 1.8.1 の `tldr --update` は同梱ルート証明書が古く
+    # release-assets.githubusercontent.com の Let's Encrypt チェーンを
+    # UnknownIssuer で弾くため、アーカイブを直接展開する。
+    # 更新したいときは pages.en ごと消してから再実行する。
+    - name: check tldr cache
+      stat:
+        path: ~/Library/Caches/tealdeer/tldr-pages/pages.en/common
+      register: rc_tldr_cache
+
+    - name: install tldr pages
+      when: not rc_tldr_cache.stat.exists
+      block:
+        - name: prepare tldr cache directory
+          ansible.builtin.file:
+            path: ~/Library/Caches/tealdeer/tldr-pages/pages.en
+            state: directory
+
+        - name: unarchive tldr pages
+          ansible.builtin.unarchive:
+            src: "https://github.com/tldr-pages/tldr/releases/latest/download/tldr-pages.en.zip"
+            dest: ~/Library/Caches/tealdeer/tldr-pages/pages.en
+            remote_src: yes
 
     - name: check pg_bigm.so
       stat:
@@ -93,13 +140,14 @@
         name: postgresql@16
         state: "{{ 'present' if rc_pg_bigm.stat.exists else 'restarted' }}"
 
-    - name: prepare git and mise config directory
+    - name: prepare git, mise and claude config directory
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
       loop:
         - ~/.config/mise
         - ~/.config/git
+        - ~/.claude
 
     - name: copy files
       ansible.builtin.copy:
@@ -116,6 +164,10 @@
           dest: ~/.tmux.conf
         - src: assets/gitignore
           dest: ~/.config/git/ignore
+        - src: assets/mac/gitconfig
+          dest: ~/.gitconfig
+        - src: assets/mac/CLAUDE.md
+          dest: ~/.claude/CLAUDE.md
 
     - name: copy mise config file
       ansible.builtin.copy:

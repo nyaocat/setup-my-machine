@@ -33,20 +33,11 @@ setopt hist_save_no_dups
 setopt hist_no_store
 setopt hist_expand
 setopt inc_append_history
-bindkey "^R" history-incremental-search-backward
 bindkey "^S" history-incremental-search-forward
 
 
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-
-function peco-select-history() {
-  BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
-  CURSOR=$#BUFFER
-  zle clear-screen
-}
-zle -N peco-select-history
-bindkey '^r' peco-select-history
 
 zstyle ':completion:*' menu select=2
 
@@ -57,3 +48,21 @@ export PATH="/opt/homebrew/opt/libpq/bin/:$HOME/.local/bin:$PATH"
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 eval "$(zoxide init zsh)"
+
+# fzf: Ctrl-T (ファイル) / Alt-C (ディレクトリ) / ** 補完。Ctrl-R は atuin に譲る
+if type fzf &>/dev/null; then
+  source <(fzf --zsh)
+  if type fd &>/dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git'
+  fi
+  if type bat &>/dev/null; then
+    export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {}'"
+  fi
+fi
+
+# atuin: Ctrl-R の履歴検索。fzf の後に読み込んで Ctrl-R を確実に上書きする
+if type atuin &>/dev/null; then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
