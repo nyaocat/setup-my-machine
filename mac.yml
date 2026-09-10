@@ -71,6 +71,7 @@
           - watchexec
           - atuin
           - xh
+          - zed
 
     - name: remove packages
       community.general.homebrew:

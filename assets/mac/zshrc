@@ -17,6 +17,7 @@ PROMPT="
 
 alias l='eza --git --group-directories-first -l --time-style long-iso'
 alias code='open -a "Visual Studio Code"'
+alias claude-sub='CLAUDE_SECURESTORAGE_CONFIG_DIR="$HOME/.claude-sub-auth" claude'
 
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=100000
@@ -28,7 +29,7 @@ setopt share_history
 setopt hist_ignore_all_dups
 setopt hist_ignore_space
 setopt hist_verify
-setopt hist_reduce_blanks  
+setopt hist_reduce_blanks
 setopt hist_save_no_dups
 setopt hist_no_store
 setopt hist_expand
