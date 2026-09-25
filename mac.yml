@@ -72,6 +72,7 @@
           - atuin
           - xh
           - zed
+          - activitywatch
 
     - name: remove packages
       community.general.homebrew:
@@ -140,6 +141,17 @@
       community.general.homebrew_services:
         name: postgresql@16
         state: "{{ 'present' if rc_pg_bigm.stat.exists else 'restarted' }}"
+
+    - name: add ActivityWatch to login items
+      ansible.builtin.shell: |
+        osascript -e 'tell application "System Events"
+          if not (exists login item "ActivityWatch") then
+            make login item at end with properties {path:"/Applications/ActivityWatch.app", hidden:true}
+            return "added"
+          end if
+        end tell'
+      register: rc_aw_login_item
+      changed_when: rc_aw_login_item.stdout == "added"
 
     - name: prepare git, mise and claude config directory
       ansible.builtin.file:
