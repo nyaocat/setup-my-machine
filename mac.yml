@@ -193,5 +193,58 @@
         cmd: mise install
       when: rc_copy_mise_config.changed
 
+    # nyaochute: 開発用 ~/project/nyaochute とは別に checkout してビルドし、
+    # launchd で 127.0.0.1:8082 に常駐させる (8081 は mise run dev が使う)。
+    - name: checkout nyaochute
+      ansible.builtin.git:
+        repo: git@github.com:nyaocat/nyaochute.git
+        dest: ~/.local/src/nyaochute
+      register: rc_nyaochute_git
+
+    - name: check nyaochute binary
+      stat:
+        path: ~/.local/src/nyaochute/dist/nyaochute
+      register: rc_nyaochute_bin
+
+    - name: build nyaochute
+      when: rc_nyaochute_git.changed or not rc_nyaochute_bin.stat.exists
+      ansible.builtin.shell: |
+        mise trust && mise install && mise exec -- pnpm -C web install --frozen-lockfile && mise run build
+      args:
+        chdir: ~/.local/src/nyaochute
+      environment:
+        CI: "true"
+      register: rc_nyaochute_build
+
+    - name: install nyaochute launch agent
+      ansible.builtin.copy:
+        dest: ~/Library/LaunchAgents/com.github.nyaocat.nyaochute.plist
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>Label</key><string>com.github.nyaocat.nyaochute</string>
+            <key>ProgramArguments</key>
+            <array>
+              <string>{{ ansible_facts.env.HOME }}/.local/src/nyaochute/dist/nyaochute</string>
+              <string>-addr</string><string>127.0.0.1:8082</string>
+              <string>-data</string><string>{{ ansible_facts.env.HOME }}/Library/Application Support/nyaochute</string>
+            </array>
+            <key>RunAtLoad</key><true/>
+            <key>KeepAlive</key><true/>
+            <key>StandardErrorPath</key><string>{{ ansible_facts.env.HOME }}/Library/Logs/nyaochute.log</string>
+          </dict>
+          </plist>
+      register: rc_nyaochute_plist
+
+    - name: (re)start nyaochute
+      when: rc_nyaochute_plist.changed or rc_nyaochute_build.changed
+      ansible.builtin.shell: |
+        launchctl bootout gui/$(id -u)/com.github.nyaocat.nyaochute 2>/dev/null || true
+        # bootout は非同期なので消えるまで待たないと bootstrap が EIO で落ちる
+        while launchctl print gui/$(id -u)/com.github.nyaocat.nyaochute >/dev/null 2>&1; do sleep 0.1; done
+        launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.github.nyaocat.nyaochute.plist
+
     - name: Clean up downloads directory
       ansible.builtin.shell: "rm -rf ~/Downloads/*"
