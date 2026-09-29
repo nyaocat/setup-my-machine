@@ -13,7 +13,6 @@
           - bash
           - claude-code
           - cmake
-          - codex
           - duckdb
           - eza
           - ffmpeg
@@ -196,17 +195,20 @@
     # nyaochute: 開発用 ~/project/nyaochute とは別に checkout してビルドし、
     # launchd で 127.0.0.1:8082 に常駐させる (8081 は mise run dev が使う)。
     - name: checkout nyaochute
+      tags: nyaochute
       ansible.builtin.git:
         repo: git@github.com:nyaocat/nyaochute.git
         dest: ~/.local/src/nyaochute
       register: rc_nyaochute_git
 
     - name: check nyaochute binary
+      tags: nyaochute
       stat:
         path: ~/.local/src/nyaochute/dist/nyaochute
       register: rc_nyaochute_bin
 
     - name: build nyaochute
+      tags: nyaochute
       when: rc_nyaochute_git.changed or not rc_nyaochute_bin.stat.exists
       ansible.builtin.shell: |
         mise trust && mise install && mise exec -- pnpm -C web install --frozen-lockfile && mise run build
@@ -217,6 +219,7 @@
       register: rc_nyaochute_build
 
     - name: install nyaochute launch agent
+      tags: nyaochute
       ansible.builtin.copy:
         dest: ~/Library/LaunchAgents/com.github.nyaocat.nyaochute.plist
         content: |
@@ -239,6 +242,7 @@
       register: rc_nyaochute_plist
 
     - name: (re)start nyaochute
+      tags: nyaochute
       when: rc_nyaochute_plist.changed or rc_nyaochute_build.changed
       ansible.builtin.shell: |
         launchctl bootout gui/$(id -u)/com.github.nyaocat.nyaochute 2>/dev/null || true
